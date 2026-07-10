@@ -1,0 +1,49 @@
+*{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+html, body{
+  height: 100%;
+  width: 100%;
+  background-color: #F0F0F0;
+}
+
+.container{
+  width: 100%;
+  background-color: white;
+  max-width: 40rem;
+  margin: 50px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px 20px;
+  gap: 20px;
+  box-shadow: 0 0 10px rgb(0, 0, 0, 0.219);
+  border-radius: 10px;
+}
+
+#searchInput{
+  padding: 12px 10px;
+  width: 100%;
+  border: 1px solid black;
+  border-radius: 5px;
+}
+.userContainer{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.userContainer .userItem{
+  display:flex;
+
+}
+
+.userContainer .userItem img{
+  width: 20px;
+  height: 20px;
+
+}
+
+
