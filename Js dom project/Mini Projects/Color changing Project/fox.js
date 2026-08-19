@@ -30,5 +30,5 @@ const changeColor = (color) => {
   currentColorValue.textContent = color;
 }
 
-randomBtn.addEventListener('click', handleRandomBtnClick) 
-applyBtn.addEventListener('click', handleApplyBtnClick)
+randomBtn.addEventListener('click', handleRandomBtnClick);
+applyBtn.addEventListener('click', handleApplyBtnClick);

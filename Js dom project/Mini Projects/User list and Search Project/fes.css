@@ -1,0 +1,79 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    background-color: #F0F0F0;
+}
+
+.container {
+    width: 100%;
+    background-color: white;
+    max-width: 34rem;
+    display: flex;
+    margin: 50px auto;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    padding: 50px 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.219);
+    border-radius: 10px;
+}
+
+#searchInput {
+    padding: 12px 10px;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.308);
+    border-radius: 5px;
+}
+
+.userContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.userContainer .userItem {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    padding: 15px 15px;
+    background-color: #faf8f8;
+    width: 100%;
+    height: 4rem;
+}
+
+.userContainer .userItem .image{
+    height: 100%;
+    border-radius: 100%;
+    overflow: hidden;
+    aspect-ratio: 1/1;
+}
+
+.userContainer .userItem img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover; 
+    object-position: top;
+}
+
+.userContainer .userItem .userDetails{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.userContainer .userItem .userDetails h3 {
+    font-size: 14px;
+}
+
+.userContainer .userItem .userDetails p {
+    font-size: 12px;
+}
