@@ -11,11 +11,10 @@ let quotes = [
   "The best time to plant a tree was 20 years ago. The second best time is now.",
 ];
 
-const button = document.querySelector("button");
-const quote = document.querySelector("h1");
-button.addEventListener("click", () => {
-  const index = Math.floor(Math.random() * quotes.length);
-  quote.textContent = quotes[index];
+let button = document.querySelector("button");
+let quoteDisplay = document.querySelector("h1");
 
-
-})
+button.addEventListener("click", function () {
+  let randomIndex = Math.floor(Math.random() * quotes.length);
+  quoteDisplay.textContent = quotes[randomIndex];
+});
