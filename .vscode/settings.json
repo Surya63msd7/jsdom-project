@@ -1,5 +1,6 @@
 {
   "liveServer.settings.port": 5501,
   "git.ignoreLimitWarning": true,
-  "svn.ignoreMissingSvnWarning": true
+  "svn.ignoreMissingSvnWarning": true,
+  "python-envs.defaultEnvManager": "ms-python.python:system"
 }

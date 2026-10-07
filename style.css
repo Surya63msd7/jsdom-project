@@ -1,0 +1,48 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body{
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+}
+
+body{
+  font-size: 1.6rem;
+}
+
+.container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  gap: 4rem;
+
+}
+
+.search{
+  display: flex;
+  width: 50%;
+}
+
+.search input{
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 1.6rem;
+}
+
+.search button{
+  padding: 0.5rem 1rem;
+  font-size: 1.6rem;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.search button:active{
+  background-color: #08396d;
+}

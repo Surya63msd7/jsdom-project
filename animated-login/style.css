@@ -1,0 +1,877 @@
+:root {
+  --font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  
+  /* Color Palette */
+  --bg-dark: #090d16;
+  --card-bg: rgba(18, 24, 43, 0.72);
+  --card-border: rgba(255, 255, 255, 0.12);
+  --input-bg: rgba(255, 255, 255, 0.04);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --input-focus: #60a5fa;
+  --input-focus-glow: rgba(96, 165, 250, 0.25);
+  
+  --primary-1: #6366f1;
+  --primary-2: #3b82f6;
+  --primary-3: #06b6d4;
+  --accent-pink: #ec4899;
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  
+  --error-color: #f87171;
+  --error-bg: rgba(239, 68, 68, 0.12);
+  --success-color: #34d399;
+  
+  /* Spring physics & transitions */
+  --spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --smooth-ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================
+   Ambient Background & Floating Glow Blobs
+   ========================================================== */
+.ambient-background {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.blob-1 {
+  width: 480px;
+  height: 480px;
+  background: radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%);
+  top: -100px;
+  left: -120px;
+  animation: floatBlob1 18s ease-in-out infinite alternate;
+}
+
+.blob-2 {
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, #ec4899 0%, rgba(236, 72, 153, 0) 70%);
+  bottom: -150px;
+  right: -120px;
+  animation: floatBlob2 22s ease-in-out infinite alternate;
+}
+
+.blob-3 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, #06b6d4 0%, rgba(6, 182, 212, 0) 70%);
+  top: 40%;
+  left: 60%;
+  animation: floatBlob3 15s ease-in-out infinite alternate;
+}
+
+@keyframes floatBlob1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(140px, 80px) scale(1.15); }
+  100% { transform: translate(60px, 160px) scale(0.95); }
+}
+
+@keyframes floatBlob2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-120px, -90px) scale(1.1); }
+  100% { transform: translate(-60px, -180px) scale(0.9); }
+}
+
+@keyframes floatBlob3 {
+  0% { transform: translate(0, 0) scale(0.9); }
+  50% { transform: translate(-80px, 60px) scale(1.2); }
+  100% { transform: translate(90px, -70px) scale(1); }
+}
+
+#particleCanvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.65;
+}
+
+/* ==========================================================
+   Main Wrapper & 3D Tilt Card
+   ========================================================== */
+.login-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 460px;
+  padding: 60px 16px 40px;
+  perspective: 1200px;
+}
+
+.card-container {
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease-out;
+}
+
+.glass-card {
+  position: relative;
+  background: var(--card-bg);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  padding: 24px 32px 36px;
+  box-shadow: 
+    0 25px 50px -12px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  overflow: visible;
+  transition: box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+  box-shadow: 
+    0 30px 65px -12px rgba(0, 0, 0, 0.75),
+    0 0 35px rgba(99, 102, 241, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================
+   Interactive Mascot (SVG Avatar)
+   ========================================================== */
+.mascot-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -85px;
+  margin-bottom: 8px;
+  pointer-events: auto;
+  cursor: pointer;
+  transform-style: preserve-3d;
+}
+
+.mascot-glow {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.4) 0%, rgba(99, 102, 241, 0) 70%);
+  border-radius: 50%;
+  filter: blur(20px);
+  z-index: 0;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+#mascotSvg {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.5));
+  transition: transform 0.25s ease;
+}
+
+.mascot-wrapper:hover #mascotSvg {
+  transform: scale(1.04) translateY(-3px);
+}
+
+/* Eyelids Blink Animation */
+.eyelid {
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.mascot-blinking .eyelid {
+  opacity: 1;
+  stroke-width: 3;
+}
+
+/* Pupil Transitions */
+.pupil-group {
+  transition: transform 0.08s ease-out;
+  transform-origin: center;
+}
+
+/* Paw Positioning & Animated Peekaboo */
+.paw {
+  transform-origin: 50% 90%;
+  transition: transform 0.42s var(--spring-bounce);
+  will-change: transform;
+}
+
+/* Covered Eyes (Password Focused) */
+.mascot-wrapper.covering-eyes #leftPaw {
+  transform: translate(25px, -52px) rotate(22deg);
+}
+
+.mascot-wrapper.covering-eyes #rightPaw {
+  transform: translate(-25px, -52px) rotate(-22deg);
+}
+
+/* Peeking Eye (Show Password active) */
+.mascot-wrapper.peeking #leftPaw {
+  transform: translate(25px, -52px) rotate(22deg);
+}
+
+.mascot-wrapper.peeking #rightPaw {
+  transform: translate(-20px, -26px) rotate(-42deg);
+}
+
+/* Nod on success */
+.mascot-wrapper.nodding #mascotSvg {
+  animation: mascotNod 0.7s var(--spring-bounce);
+}
+
+@keyframes mascotNod {
+  0%, 100% { transform: translateY(0); }
+  35% { transform: translateY(-12px) scaleY(1.05); }
+  65% { transform: translateY(4px) scaleY(0.95); }
+}
+
+/* Head Shake on error */
+.mascot-wrapper.shaking #mascotSvg {
+  animation: mascotShake 0.5s ease-in-out;
+}
+
+@keyframes mascotShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-9px) rotate(-4deg); }
+  40% { transform: translateX(9px) rotate(4deg); }
+  60% { transform: translateX(-5px) rotate(-2deg); }
+  80% { transform: translateX(5px) rotate(2deg); }
+}
+
+/* ==========================================================
+   Card Header
+   ========================================================== */
+.card-header {
+  text-align: center;
+  margin-bottom: 22px;
+}
+
+.brand-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  background: linear-gradient(135deg, #ffffff 30%, #cbd5e1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 6px;
+}
+
+.brand-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  transition: opacity 0.25s ease;
+}
+
+/* ==========================================================
+   Tabs Nav (Sign In / Create Account)
+   ========================================================== */
+.tabs-nav {
+  position: relative;
+  display: flex;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 14px;
+  padding: 4px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.tabs-indicator {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: calc(50% - 4px);
+  height: calc(100% - 8px);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.85), rgba(59, 130, 246, 0.85));
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+  transition: transform 0.32s var(--smooth-ease);
+  pointer-events: none;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 10px 0;
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 0.25s ease;
+}
+
+.tab-btn:hover {
+  color: #ffffff;
+}
+
+.tab-btn.active {
+  color: #ffffff;
+}
+
+/* ==========================================================
+   Forms Sliding Layout
+   ========================================================== */
+.forms-slider {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  transition: height 0.35s var(--smooth-ease);
+}
+
+.auth-form {
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: transform 0.38s var(--smooth-ease), opacity 0.3s ease;
+}
+
+/* Switch between Sign In and Sign Up */
+.forms-slider.show-signup #signInForm {
+  transform: translateX(-105%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.forms-slider.show-signup #signUpForm {
+  transform: translateX(-100%);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.forms-slider:not(.show-signup) #signInForm {
+  transform: translateX(0%);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.forms-slider:not(.show-signup) #signUpForm {
+  transform: translateX(5%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ==========================================================
+   Floating Label Form Inputs
+   ========================================================== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 14px;
+  padding: 16px 44px 14px 16px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  outline: none;
+  transition: 
+    border-color 0.25s ease, 
+    box-shadow 0.25s ease, 
+    background 0.25s ease;
+}
+
+.form-input:hover {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.form-input:focus {
+  border-color: var(--input-focus);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px var(--input-focus-glow);
+}
+
+/* Floating Label Behavior */
+.floating-label {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: 
+    transform 0.22s ease, 
+    font-size 0.22s ease, 
+    color 0.22s ease, 
+    top 0.22s ease;
+  background: transparent;
+  padding: 0 4px;
+}
+
+.form-input:focus ~ .floating-label,
+.form-input:not(:placeholder-shown) ~ .floating-label {
+  top: 0;
+  transform: translateY(-50%) scale(0.85);
+  transform-origin: left top;
+  color: var(--input-focus);
+  background: #111628;
+  border-radius: 4px;
+}
+
+/* Right Icons (Mail, User, Eye toggle) */
+.input-icon {
+  position: absolute;
+  right: 14px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: color 0.25s ease;
+}
+
+.form-input:focus ~ .input-icon {
+  color: var(--input-focus);
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 8px;
+  transition: color 0.2s ease, background 0.2s ease;
+}
+
+.toggle-password-btn:hover {
+  color: var(--text-main);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.toggle-password-btn .hidden {
+  display: none;
+}
+
+/* Validation Feedback & Error Messages */
+.error-msg {
+  font-size: 0.78rem;
+  color: var(--error-color);
+  margin-top: 4px;
+  padding-left: 6px;
+  min-height: 16px;
+  display: block;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.error-msg.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.form-group.has-error .form-input {
+  border-color: var(--error-color);
+  box-shadow: 0 0 0 3px var(--error-bg);
+  animation: inputShake 0.4s ease-in-out;
+}
+
+.form-group.has-error .floating-label {
+  color: var(--error-color);
+}
+
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+}
+
+/* ==========================================================
+   Password Strength Meter
+   ========================================================== */
+.strength-meter {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 4px;
+}
+
+.strength-bar {
+  height: 4px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.strength-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.strength-text {
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  transition: color 0.3s ease;
+}
+
+/* ==========================================================
+   Form Options (Remember Me & Links)
+   ========================================================== */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-top: -2px;
+}
+
+.custom-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  color: var(--text-muted);
+  transition: color 0.2s ease;
+}
+
+.custom-checkbox:hover {
+  color: var(--text-main);
+}
+
+.custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.2s var(--spring-bounce);
+}
+
+.checkmark svg {
+  opacity: 0;
+  transform: scale(0.5);
+  stroke: #ffffff;
+  transition: opacity 0.2s ease, transform 0.25s var(--spring-bounce);
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background: var(--primary-2);
+  border-color: var(--primary-2);
+  transform: scale(1.05);
+}
+
+.custom-checkbox input:checked ~ .checkmark svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.forgot-link, .inline-link {
+  color: var(--input-focus);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.forgot-link:hover, .inline-link:hover {
+  color: #93c5fd;
+  text-shadow: 0 0 10px rgba(147, 197, 253, 0.4);
+}
+
+/* ==========================================================
+   Animated Submit Button
+   ========================================================== */
+.submit-btn {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  padding: 14px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, var(--primary-1), var(--primary-2), var(--primary-3));
+  background-size: 200% auto;
+  border: none;
+  border-radius: 14px;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 8px 24px -4px rgba(59, 130, 246, 0.4);
+  transition: 
+    background-position 0.4s ease, 
+    transform 0.2s ease, 
+    box-shadow 0.25s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.submit-btn:hover {
+  background-position: right center;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -4px rgba(59, 130, 246, 0.6);
+}
+
+.submit-btn:active {
+  transform: translateY(1px);
+}
+
+/* Button Loading State */
+.submit-btn.loading {
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+.submit-btn.loading .btn-text {
+  opacity: 0;
+}
+
+.btn-loader {
+  display: none;
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: btnSpin 0.75s linear infinite;
+}
+
+.submit-btn.loading .btn-loader {
+  display: block;
+}
+
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Ripple Click Wave Effect */
+.btn-ripple {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(0);
+  animation: rippleEffect 0.6s linear;
+  pointer-events: none;
+}
+
+@keyframes rippleEffect {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* ==========================================================
+   Divider & Social Row
+   ========================================================== */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 22px 0 16px;
+  color: var(--text-dim);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.divider::before, .divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.divider span {
+  padding: 0 12px;
+}
+
+.social-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 46px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: 
+    background 0.25s ease, 
+    border-color 0.25s ease, 
+    transform 0.2s var(--spring-bounce), 
+    box-shadow 0.25s ease;
+}
+
+.social-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.4);
+}
+
+.social-btn:active {
+  transform: translateY(0);
+}
+
+/* ==========================================================
+   Toast Notifications
+   ========================================================== */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.toast {
+  pointer-events: auto;
+  min-width: 280px;
+  max-width: 380px;
+  padding: 14px 18px;
+  background: rgba(22, 28, 48, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  color: #ffffff;
+  font-size: 0.88rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  transform: translateX(120%);
+  animation: toastSlideIn 0.4s var(--spring-bounce) forwards;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.toast-success {
+  border-left: 4px solid var(--success-color);
+}
+
+.toast.toast-error {
+  border-left: 4px solid var(--error-color);
+}
+
+.toast.toast-info {
+  border-left: 4px solid var(--primary-2);
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  display: flex;
+}
+
+.toast-msg {
+  flex: 1;
+  line-height: 1.35;
+}
+
+@keyframes toastSlideIn {
+  to { transform: translateX(0); }
+}
+
+.toast.toast-hide {
+  opacity: 0;
+  transform: translateY(-15px) scale(0.95);
+}
+
+/* ==========================================================
+   Responsive Adaptations
+   ========================================================== */
+@media (max-width: 480px) {
+  .login-wrapper {
+    padding: 65px 14px 20px;
+  }
+
+  .glass-card {
+    padding: 20px 20px 28px;
+    border-radius: 22px;
+  }
+
+  .brand-title {
+    font-size: 1.45rem;
+  }
+
+  .toast-container {
+    left: 16px;
+    right: 16px;
+    top: 16px;
+  }
+
+  .toast {
+    min-width: unset;
+    width: 100%;
+  }
+}
