@@ -1,3 +1,11 @@
+let timer = 60;
+
+function getNewHit() {
+  let rn = Math.floor(Math.random() * 10);
+  document.querySelector("#hitvale").textContent = rn;
+}
+
+
 function makeBubble() {
   let flutter = "";
 
@@ -9,17 +17,17 @@ function makeBubble() {
   document.querySelector("#ptbtm").innerHTML = flutter;
 }
 
-let timer = 60;
+
 function runTimer() {
-  let timer = setInterval(function () {
+  let timerint = setInterval(function () {
     if (timer > 0) {
       timer--;
       document.querySelector("#timerval").textContent = timer;
-    }
-    else {
-      clearInterval(timer);
+    } else {
+      clearInterval(timerint);
     }
   }, 1000);
 }
 runTimer();
 makeBubble();
+getNewHit();
