@@ -16,14 +16,14 @@ html, body{
   justify-content: center;
   height: 100%;
   width: 100%;
-  background-color: rgb(54, 240, 116);
+  background-color: rgb(51, 180, 203);
 }
 
 #panel{
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
   border-radius: 10px;
-  background-color: rgb(174, 210, 222);
+  background-color: #fff;
 }
 
 #ptop{
@@ -33,7 +33,7 @@ html, body{
   align-items: center;
   width: 100%;
   height: 100px;
-  background-color: rgb(71, 115, 87);
+  background-color: rgb(54, 189, 104);
 }
 
 .elem{
@@ -56,7 +56,11 @@ html, body{
   background-color: white;
   border-radius: 5px;
 }
-
+#ptbtm{
+  display: flex;
+  justify-content: center;   /* horizontal center */
+  align-items: center;       /* vertical center */
+}
 #ptbtm{
   display: flex;
   flex-wrap: wrap;
@@ -64,6 +68,7 @@ html, body{
   width: 100%;
   height: calc(100% - 100px);
   padding: 20px;
+  font-size: 20px;
 }
 
 .bubble{
@@ -76,8 +81,11 @@ html, body{
   color: #fff;
   border-radius: 50%;
   font-weight: 600;
+  font-size: 20px;
+  
 }
 .bubble:hover{
  cursor: pointer;
  background-color: rgb(143, 9, 9);
+
 }
